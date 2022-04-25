@@ -8,6 +8,9 @@ Created on Thu Apr 14 17:32:57 2022
 import Extract_stats as es
 import load_pglib_opf as lp
 import pandas as pd
+#this make things work without issues, however in the future it should be removed
+import warnings
+warnings.filterwarnings("ignore")
 
 """
 This program once executed creates a dataset with the chosen statistics using all the
