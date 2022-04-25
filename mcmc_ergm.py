@@ -9,6 +9,7 @@ import numpy as np
 import networkx as nx
 from copy import deepcopy
 from math import factorial as fac
+from tqdm import tqdm
 
 # --------------------------------Utils------------------------------------
 
@@ -36,13 +37,23 @@ def random_element(n):
     else:
         return(random_element(n))
     
+def generate_connected_adj(size):
+    mat = np.zeros((size,size))
+    for i in range(size-1):
+        mat[i][i+1] = 1
+        mat[i+1][i] = 1
+    mat[size-1][0] = 1
+    mat[0][size-1] = 1
+    return(mat)
+    
+    
 
 def change_element(mtx,n):
     i,j = random_element(n)
     newm = deepcopy(mtx)
     newm[i][j] = np.abs(mtx[i][j]-1)
     newm[j][i] = newm[i][j]
-    return(newm)
+    return(newm,newm[i][j])
 
 def avg_degreetype(mx,bustypes):
     dgen = 0
@@ -211,16 +222,14 @@ def M_H_ergm(startmtx,ham,observables,comp_observables):
 
 #--Metropolis-Hastings Algorithm for the specific ERGM for Power Grids, Hamiltonian with 3 averages--
 
-def M_H_ergmPG(startmtx,observables,buslist,params):
-    condition=False
+def M_H_ergmPG(startmtx,observables,buslist,params,maxiter=2500):
     n = len(startmtx)
     obs = avg_degreetype(startmtx,bustypes=buslist)
     oldham = dtype_ham(obs,params=params)
     mtx=deepcopy(startmtx)
-    count=0
     synth=[]
-    while(condition==False):
-        nmtx = change_element(mtx,n)
+    for i in tqdm(range(maxiter)):
+        nmtx,_ = change_element(mtx,n)
         newobs = avg_degreetype(nmtx,bustypes=buslist)
         newham = dtype_ham(newobs,params=params)
         p = compute_p(newham,oldham)
@@ -228,13 +237,47 @@ def M_H_ergmPG(startmtx,observables,buslist,params):
             mtx=nmtx
             oldham = newham
         newobs = avg_degreetype(mtx,bustypes=buslist)
-        count+=1
         if np.allclose(newobs,observables,atol=0.5)==True :
             #print(newobs)
             synth.append(mtx)
-        if count > 100000:
-            print('no convergence')
-            break
-    print(count)
+        i+=1
+    return(mtx,synth)
+
+def MHergmPG_conn(startmtx,observables,buslist,params,maxiter=2500):
+    n = len(startmtx)
+    obs = avg_degreetype(startmtx,bustypes=buslist)
+    oldham = dtype_ham(obs,params=params)
+    mtx=deepcopy(startmtx)
+    synth=[]
+    for i in tqdm(range(maxiter)):
+        nmtx,move = change_element(mtx,n)
+        if move==1:            
+            newobs = avg_degreetype(nmtx,bustypes=buslist)
+            newham = dtype_ham(newobs,params=params)
+            p = compute_p(newham,oldham)
+            if (np.random.random()<p) == True:
+                mtx=nmtx
+                oldham = newham
+                newobs = avg_degreetype(mtx,bustypes=buslist)
+                if np.allclose(newobs,observables,atol=0.5)==True :
+                    #print(newobs)
+                    synth.append(mtx)
+        else:
+            G = nx.from_numpy_array(nmtx)
+            if nx.is_connected(G) == True:
+                newobs = avg_degreetype(nmtx,bustypes=buslist)
+                newham = dtype_ham(newobs,params=params)
+                p = compute_p(newham,oldham)
+                if (np.random.random()<p) == True:
+                    mtx=nmtx
+                    oldham = newham
+                    newobs = avg_degreetype(mtx,bustypes=buslist)
+                    if np.allclose(newobs,observables,atol=0.5)==True :
+                        #print(newobs)
+                        synth.append(mtx)
+            else:
+                i+=1
+        
+        i+=1
     return(mtx,synth)
         
