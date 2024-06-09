@@ -12,5 +12,5 @@ In this repo there is the main implementation for the joint work with A. Zocca a
 
 -  pg_utils contains various ancillary functions used in the code.
 
--  load_pglib_opf.py is a revisited version of the module created by Leon Lan (who I still deeply thank for the help) available here https://github.com/leonlan/pglib-opf-pyparser.git , and it's used to parse the grid data.
+-  load_pglib_opf.py is a revisited version of the module created by Leon Lan (whom I still deeply thank for the help) available here https://github.com/leonlan/pglib-opf-pyparser.git , and it's used to parse the grid data.
 
