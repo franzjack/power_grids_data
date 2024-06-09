@@ -8,9 +8,10 @@ Created on Tue Nov  8 17:04:19 2022
 import numpy as np
 from copy import copy
 from tqdm import tqdm
-import scratches as sc
+import pg_utils as sc
 from numba import jit
 from copy import deepcopy
+import pg_utils as sc
 
 from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import connected_components
@@ -57,8 +58,10 @@ def compute_p(prop,current):
 
 def change_param(obs,robs,par,a,c):
     npar = copy(par)
-    for i in range(len(par)):
-        npar[i] = npar[i] + a*np.max(np.array([np.abs(npar[i]),c]))*-np.sign(obs[i]-robs[i])
+    for i in range(len(npar)):
+        change = a*np.max(np.array([np.abs(npar[i]),c]))*-np.sign(obs[i]-robs[i])
+        npar[i] = npar[i] + change
+   
     
     return(npar)
 
@@ -98,7 +101,9 @@ def EEsparse(startmtx,observables,params,countlist,obs_comp,fast_obs,maxiter,alp
         cond=1
         nmtx,move,i,j = change_element2(mtx,n)
         newobs = fast_obs(obs,nmtx,ordlist,move,i,j)
+        
         newham = dtype_ham(newobs,params=params)
+        
         p = compute_p(newham,oldham)
         if move==0:
             G_sparse = csr_matrix(nmtx)
@@ -114,12 +119,14 @@ def EEsparse(startmtx,observables,params,countlist,obs_comp,fast_obs,maxiter,alp
             if count==n_step:
                 count=0
                 bigcount+=1
-                params = copy(change_param(obs,observables,params,alpha,c))
+                params = change_param(obs,observables,params,alpha,c)
                 paramEE.append(params)
+                #print(params)
+                
         else:
             nmtx[i][j] = nmtx[j][i] = np.abs(move-1)
                 
-        if bigcount%100==0:
+        if bigcount%10==0:
             print(params)
             bigcount+=1
                 
@@ -181,27 +188,3 @@ def pg_MHergm_conn(startmtx,observables,params,countlist,obs_comp,fast_obs,maxit
 
 
 
-
-#---------chain thinning--------------
-def selector(synths):
-    sel=[]
-    ksel = copy(synths[int(len(synths)/1.5):])
-    for i in range(len(ksel)):
-        if i%int((len(synths[0].toarray())/2))==0:
-            sel.append(ksel[i].toarray())
-    return(sel)
-
-
-def synth_selection2(synlist,countlist,buslist):
-    """
-    Gsynlist = [nx.from_numpy_matrix(mtx) for mtx in synlist]
-    boolconn = [nx.is_connected(G) for G in Gsynlist]
-    conn_indx = np.where(boolconn)[0]
-    mtxlist = [synlist[idx] for idx in conn_indx]
-    Glist = [Gsynlist[idx] for idx in conn_indx]
-    """
-    Glist = [nx.from_numpy_matrix(mtx) for mtx in synlist]
-    clust_list = [es.clustering_coeff(G) for G in tqdm(Glist)]
-    ac_list = [alg_conn(synth) for synth in tqdm(synlist)]
-    avg_typedeg = [mc.new_avg_degreetype(mtx,countlist[0],countlist[1],countlist[2]) for mtx in tqdm(synlist)]
-    return(Glist,clust_list,avg_typedeg,ac_list)

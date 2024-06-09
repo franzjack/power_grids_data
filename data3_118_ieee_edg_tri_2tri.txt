@@ -1,0 +1,29 @@
+Simulation data on grid 118_ieee for model _edg_tri_2tri
+The estimation resulted in the following parameters: 
+[-3.928519052135274, -4.199104662293042, -4.123285303142162, -4.832076414793347, -4.396765347088649, -3.1569197221987393, 2.1625035095422507, -0.3063143965411583]
+Generator Average Degree, benchmark value: 3.5555555555555554
+Generator Average Degree: mean 3.7096296296296294 std dev 0.3557144706593876
+Load Average Degree, benchmark value: 2.5
+Load Average Degree: mean 2.455214285714286 std dev 0.17538035924288464
+Interconnection Average Degree, benchmark value: 3.25
+Interconnection Average Degree: mean 3.1785 std dev 0.6067950642515149
+Triangles, benchmark value: 23.0
+Triangles: mean 23.688 std dev 7.009611686819748
+2-Triangles, benchmark value: 11.0
+2-Triangles: mean 12.588 std dev 9.271583252066499
+Generator Average Degree, benchmark value: 3.5555555555555554
+Generator Average Degree: mean 3.7096296296296294 std dev 0.3557144706593876
+Load Average Degree, benchmark value: 2.5
+Load Average Degree: mean 2.455214285714286 std dev 0.17538035924288464
+Interconnection Average Degree, benchmark value: 3.25
+Interconnection Average Degree: mean 3.1785 std dev 0.6067950642515149
+Triangles, benchmark value: 23.0
+Triangles: mean 23.688 std dev 7.009611686819748
+2-Triangles, benchmark value: 11.0
+2-Triangles: mean 12.588 std dev 9.271583252066499
+Average path length, benchmark value: 3.5555555555555554
+Average path length: mean 4.635728813559322 std dev 0.3319268287088919
+Algebraic connectivity, benchmark value: 2.5
+Algebraic connectivity: mean 0.10996657593081889 std dev 0.03506645420709479
+Clustering coefficient, benchmark value: 3.25
+Clustering coefficient: mean 0.10797685083278301 std dev 0.026213604511495334

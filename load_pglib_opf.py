@@ -153,7 +153,7 @@ def infer_types(df):
 
 
 def pow_parser(name):
-    bus_data, gen_data, branch_data = load_pglib_opf("pglib_opf_case"+name+".m")
+    bus_data, gen_data, branch_data = load_pglib_opf("Data/pglib_opf_case"+name+".m")
     bus_data['index1'] = bus_data.index
     bus_i = bus_data['bus_i'].to_numpy()
     bus_idx = bus_data['index1'].to_numpy()

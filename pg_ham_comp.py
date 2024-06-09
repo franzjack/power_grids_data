@@ -273,7 +273,7 @@ def fast_obs_edg_dgen(past_obs,mtx,ordlist,move,i,j):
     newobs = np.concatenate((newobsD,newobsE))
     return(newobs)
 
-def comp_obs_and_betas(modtype,ordmat,ordlist,countlist,maxiter=300000,startguess=np.array([1,-0.2])):
+def comp_obs_and_betas(modtype,ordmat,ordlist,countlist,maxiter=3000,startguess=np.array([1,-0.2])):
     q1,q2,q3 = countlist[0],countlist[1],countlist[2]
     if modtype == '_edg_tri_2tri':
         obs = obs_edg_tri_2tri(ordmat,q1,q2,q3)

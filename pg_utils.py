@@ -100,7 +100,7 @@ def matrix_clean(mtx):
     newm = np.delete(mtx,indexes,0)
     newmtx = np.delete(newm,indexes,1)                       
     return(newmtx,indexes,targets)
-def synth_selection2(synlist,countlist,buslist):
+def synth_selection2(synlist,buslist):
     """
     Gsynlist = [nx.from_numpy_matrix(mtx) for mtx in synlist]
     boolconn = [nx.is_connected(G) for G in Gsynlist]
@@ -108,10 +108,10 @@ def synth_selection2(synlist,countlist,buslist):
     mtxlist = [synlist[idx] for idx in conn_indx]
     Glist = [Gsynlist[idx] for idx in conn_indx]
     """
-    Glist = [nx.from_numpy_matrix(mtx) for mtx in synlist]
+    Glist = [nx.from_numpy_array(mtx) for mtx in synlist]
     clust_list = [clustering_coeff(G) for G in tqdm(Glist)]
     ac_list = [alg_conn(synth) for synth in tqdm(synlist)]
-    avg_typedeg = [avg_degreetype(mtx,countlist[0],countlist[1],countlist[2]) for mtx in tqdm(synlist)]
+    avg_typedeg = [avg_degreetype(mtx,buslist) for mtx in tqdm(synlist)]
     return(Glist,clust_list,avg_typedeg,ac_list)
 
 def matrix_from_branch(flist,tolist,shape):

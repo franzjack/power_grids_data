@@ -11,13 +11,18 @@ from copy import copy
 from math import factorial as fac
 from tqdm import tqdm
 from scipy import sparse
-import scratches as sc
+import pg_utils as sc
 from numba import jit
 
 import numba as nb
 
 from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import connected_components
+
+
+
+
+#--------utility functions
 
 
 def byn_coef(N):
@@ -69,6 +74,10 @@ def check_condition(realvals,thetas,quants):
     cond = np.allclose(prop,realvals,atol=0.2)
     return(cond)
 
+
+
+#----search the parameters that satisfy the free-energy derivative condition using a greedy algorithm (available for multiple algorithms)
+
 @jit
 def greedsearch_param2(realvals,NG,NL,NI,maxiter=30000,startguess=[0,0,0,0,0,0]):
     NGG = byn_coef(NG)
@@ -93,6 +102,54 @@ def greedsearch_param2(realvals,NG,NL,NI,maxiter=30000,startguess=[0,0,0,0,0,0])
     for k in range(len(realvals)):
        print(freederivative2(thetas[k],quants[k]))
     return(np.array(thetas))
+
+
+@jit
+def greedsearch_paramDD(realvalsD,realvalsE,ordmat,ordlist,countlist,maxiter=300000):
+    thetasD = np.zeros(len(realvalsD))
+    thetasE = np.zeros(len(realvalsE))
+    dlist=[]
+    elist=[]
+    for l in tqdm(range(maxiter)):
+        for k in range(len(realvalsD)):
+            thetasD = tweak_paramsD(realvalsD[k],k,ordlist,thetasE,thetasD)
+
+        for z in range(len(realvalsE)):
+            thetasE = tweak_paramsE(realvalsE[z],z,countlist,thetasE,thetasD)
+    for k in range(len(realvalsD)):
+        dlist.append(Dderivative(k, ordlist, thetasE, thetasD))
+    for z in range(len(realvalsE)):
+        elist.append(Ederivative(z,countlist,thetasE,thetasD))
+    return(thetasD,thetasE,dlist,elist)
+
+@jit
+def greedsearch_paramDD_gen(realvalsD,realvalsE,ordmat,ordlist,countlist,maxiter=300000):
+    thetasD = np.zeros(len(realvalsD))
+    thetasE = np.zeros(len(realvalsE))
+    dlist=[]
+    elist=[]
+    for l in tqdm(range(maxiter)):
+        for k in range(countlist[0]):
+            thetasD = tweak_paramsD(realvalsD[k],k,ordlist,thetasE,thetasD)
+
+        for z in range(len(realvalsE)):
+            thetasE = tweak_paramsE(realvalsE[z],z,countlist,thetasE,thetasD)
+    for k in range(countlist[0]):
+        dlist.append(Dderivative(k, ordlist, thetasE, thetasD))
+    for z in range(len(realvalsE)):
+        elist.append(Ederivative(z,countlist,thetasE,thetasD))
+    return(thetasD[:countlist[0]],thetasE,dlist,elist)
+            
+def greedsearch_paramDD2(realvalsD,ordlist,countlist,maxiter=300000):
+    thetasD = np.zeros(len(realvalsD))
+    dlist=[]
+    for l in tqdm(range(maxiter)):
+        for k in range(len(realvalsD)):
+            thetasD = tweak_paramsD2(realvalsD[k],k,thetasD)
+
+    for k in range(len(realvalsD)):
+        dlist.append(Dderivative2(k, thetasD))
+    return(thetasD,dlist)
 
 
 
@@ -154,6 +211,7 @@ def Dderivative2(idx,thetD):
     return(val)           
         
         
+#-----parameters updating functions for each model        
 
 def tweak_paramsD(dval, idx, ordlist, thetE,thetD):
     if dval - Dderivative(idx, ordlist, thetE,thetD) < 0:
@@ -178,50 +236,5 @@ def tweak_paramsD2(dval, idx, thetD):
     return(thetD)
 
     
-@jit
-def greedsearch_paramDD(realvalsD,realvalsE,ordmat,ordlist,countlist,maxiter=300000):
-    thetasD = np.zeros(len(realvalsD))
-    thetasE = np.zeros(len(realvalsE))
-    dlist=[]
-    elist=[]
-    for l in tqdm(range(maxiter)):
-        for k in range(len(realvalsD)):
-            thetasD = tweak_paramsD(realvalsD[k],k,ordlist,thetasE,thetasD)
 
-        for z in range(len(realvalsE)):
-            thetasE = tweak_paramsE(realvalsE[z],z,countlist,thetasE,thetasD)
-    for k in range(len(realvalsD)):
-        dlist.append(Dderivative(k, ordlist, thetasE, thetasD))
-    for z in range(len(realvalsE)):
-        elist.append(Ederivative(z,countlist,thetasE,thetasD))
-    return(thetasD,thetasE,dlist,elist)
-
-@jit
-def greedsearch_paramDD_gen(realvalsD,realvalsE,ordmat,ordlist,countlist,maxiter=300000):
-    thetasD = np.zeros(len(realvalsD))
-    thetasE = np.zeros(len(realvalsE))
-    dlist=[]
-    elist=[]
-    for l in tqdm(range(maxiter)):
-        for k in range(countlist[0]):
-            thetasD = tweak_paramsD(realvalsD[k],k,ordlist,thetasE,thetasD)
-
-        for z in range(len(realvalsE)):
-            thetasE = tweak_paramsE(realvalsE[z],z,countlist,thetasE,thetasD)
-    for k in range(countlist[0]):
-        dlist.append(Dderivative(k, ordlist, thetasE, thetasD))
-    for z in range(len(realvalsE)):
-        elist.append(Ederivative(z,countlist,thetasE,thetasD))
-    return(thetasD[:countlist[0]],thetasE,dlist,elist)
-            
-def greedsearch_paramDD2(realvalsD,ordlist,countlist,maxiter=300000):
-    thetasD = np.zeros(len(realvalsD))
-    dlist=[]
-    for l in tqdm(range(maxiter)):
-        for k in range(len(realvalsD)):
-            thetasD = tweak_paramsD2(realvalsD[k],k,thetasD)
-
-    for k in range(len(realvalsD)):
-        dlist.append(Dderivative2(k, thetasD))
-    return(thetasD,dlist)
 
