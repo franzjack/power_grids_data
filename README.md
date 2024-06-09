@@ -4,7 +4,7 @@ In this repo there is the main implementation for the joint work with A. Zocca a
 
 # Description of the files:
 
-- In pg_ergm_eest.py you will find an implementation of the main algorithms described in the paper. Th EEsparse algorithm is the revised Equilibrium Expectation algorithm used to estimate the parameters of the ERG model in the constrained space of connected graphs, pg_MHergm_conn instead is the MH sampler to generate connected graphs. These algorithms are implemented in a way that fits in principle any ERG formulation provided that a function to compute the hamiltonian and one function to update the observables are provided.
+- In pg_ergm_eest.py you will find an implementation of the main algorithms described in the paper. The EEsparse algorithm is the revised Equilibrium Expectation algorithm used to estimate the parameters of the ERG model in the constrained space of connected graphs, pg_MHergm_conn instead is the MH sampler to generate connected graphs. These algorithms are implemented in a way that fits in principle any ERG formulation provided that a function to compute the hamiltonian and one function to update the observables are provided.
 
 -  pg_betas_comp.py contains functions dedicated to retrieve starting points for the parameters of various ERG models tested for power grids generation.
 
