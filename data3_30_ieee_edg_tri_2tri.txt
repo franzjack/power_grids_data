@@ -1,0 +1,19 @@
+Simulation data on grid 30_ieee for model _edg_tri_2tri
+The estimation resulted in the following parameters: 
+[-3.0918297389335803, -3.6900971271927183, -10.382401742999027, -3.048370161283611, -2.1222937200416756, -7.494441525350005, 2.715646988147667, -8.735514364649916]
+Generator Average Degree, benchmark value: 2.0
+Generator Average Degree: mean 2.031084154662623 std dev 0.4464552537115363
+Load Average Degree, benchmark value: 2.772727272727273
+Load Average Degree: mean 2.7870072024260804 std dev 0.30140760516331305
+Interconnection Average Degree, benchmark value: 4.5
+Interconnection Average Degree: mean 4.5519806671721 std dev 1.2915200110622493
+Triangles, benchmark value: 6.0
+Triangles: mean 6.025445413191812 std dev 1.8103994692612881
+2-Triangles, benchmark value: 0.0
+2-Triangles: mean 0.0016110689916603487 std dev 0.04010577824160078
+Average path length, benchmark value: 3.3057471264367817
+Average path length: mean 3.5240438158479517 std dev 0.46318591043036456
+Algebraic connectivity, benchmark value: 0.21212866414495798
+Algebraic connectivity: mean 0.16122199040131818 std dev 0.07808772137242391
+Clustering coefficient, benchmark value: 0.23476190476190475
+Clustering coefficient: mean 0.19767114333452468 std dev 0.06924165640364008

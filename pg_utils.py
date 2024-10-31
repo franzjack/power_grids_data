@@ -100,6 +100,7 @@ def matrix_clean(mtx):
     newm = np.delete(mtx,indexes,0)
     newmtx = np.delete(newm,indexes,1)                       
     return(newmtx,indexes,targets)
+
 def synth_selection2(synlist,buslist):
     """
     Gsynlist = [nx.from_numpy_matrix(mtx) for mtx in synlist]

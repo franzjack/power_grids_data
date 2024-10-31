@@ -295,6 +295,6 @@ def comp_obs_and_betas(modtype,ordmat,ordlist,countlist,maxiter=3000,startguess=
         kedgobs_T = obs_edg(ordmat,q1,q2,q3)
         realvals= deg_distr(ordmat)
         thetasD,thetasE,dlist,elist=bc.greedsearch_paramDD_gen(realvals,kedgobs_T,ordmat,ordlist,countlist,maxiter=300000)
-        betas = np.concatenate((thetasD,thetasE))
+        betas = np.concatenate((thetasD[:q1],thetasE))
         obs=np.concatenate((realvals[:q1],kedgobs_T))
         return(obs,betas)

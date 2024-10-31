@@ -9,9 +9,8 @@ import numpy as np
 from copy import copy
 from tqdm import tqdm
 import pg_utils as sc
-from numba import jit
+from numba import jit,prange
 from copy import deepcopy
-import pg_utils as sc
 
 from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import connected_components
@@ -28,6 +27,14 @@ from scipy.sparse.csgraph import connected_components
 
 #-----utilities-------------
 
+
+def ordered_buslist(q1,q2,q3):
+    ordlist = np.ones((q1+q2+q3),dtype=int)
+    for i in range(q1,(q1+q2)):
+        ordlist[i]+=1
+    for i in range((q1+q2),(q1+q2+q3)):
+        ordlist[i]+=2
+    return(ordlist)
 
 def dtype_ham(X,params):
     c=np.matmul(X,params)
@@ -58,7 +65,7 @@ def compute_p(prop,current):
 
 def change_param(obs,robs,par,a,c):
     npar = copy(par)
-    for i in range(len(npar)):
+    for i in prange(len(npar)):
         change = a*np.max(np.array([np.abs(npar[i]),c]))*-np.sign(obs[i]-robs[i])
         npar[i] = npar[i] + change
    
@@ -96,7 +103,7 @@ def EEsparse(startmtx,observables,params,countlist,obs_comp,fast_obs,maxiter,alp
     count=0
     bigcount=1
     paramEE=[]
-    ordlist = sc.ordered_buslist(countlist[0],countlist[1],countlist[2])
+    ordlist = ordered_buslist(countlist[0],countlist[1],countlist[2])
     for _ in tqdm(range(maxiter)):
         cond=1
         nmtx,move,i,j = change_element2(mtx,n)
@@ -154,7 +161,7 @@ def pg_MHergm_conn(startmtx,observables,params,countlist,obs_comp,fast_obs,maxit
     synth=[]
     oblist = []
     move_count = 0
-    ordlist = sc.ordered_buslist(countlist[0],countlist[1],countlist[2])
+    ordlist = ordered_buslist(countlist[0],countlist[1],countlist[2])
     for i in tqdm(range(maxiter)):
         cond=1
         nmtx,move,l,j = change_element2(nmtx,n)
@@ -182,6 +189,15 @@ def pg_MHergm_conn(startmtx,observables,params,countlist,obs_comp,fast_obs,maxit
     print(len(obslist[0]))
     mean_list = [np.mean(ob) for ob in obslist]
     return(mean_list,synth,obslist)
+
+#---------chain thinning--------------
+def selector(synths):
+    sel=[]
+    ksel = copy(synths[int(len(synths)/1.5):])
+    for i in range(len(ksel)):
+        if i%int((len(synths[0].toarray())/2))==0:
+            sel.append(ksel[i].toarray())
+    return(sel)
 
 
 
