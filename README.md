@@ -1,6 +1,6 @@
 # power_grids_ERG
 
-In this repo there is the main implementation for the joint work with A. Zocca and G. Bet, "Generating Synthetic Power Grids using Exponential Random Graph Models". In "Tutorial_PG_ERG.ipynb" you will find a brief notebook with an example of the full generation procedure for a test grid (118_ieee). The default ERG model is the "edg_tri_2tri" which includes 6 edge-type counts, triangles count and 2-triangles count. Other implemented models are "edg" (6 edge-type count),  "edg_ddeg" (6 edge-type counts + each single node degree) and "edg_dgen" (6 edge-type counts + single node degree of each generator-type node).
+In this repo there is the main implementation for the joint work with A. Zocca and G. Bet, "Generating Synthetic Power Grids using Exponential Random Graph Models". In "Tutorial_PG_ERG.ipynb" you will find a brief notebook with an example of the full generation procedure for a test grid (300_ieee). The default ERG model is the "edg_tri_2tri" which includes 6 edge-type counts, triangles count and 2-triangles count. Other implemented models are "edg" (6 edge-type count),  "edg_ddeg" (6 edge-type counts + each single node degree) and "edg_dgen" (6 edge-type counts + single node degree of each generator-type node).
 
 # Description of the files:
 
