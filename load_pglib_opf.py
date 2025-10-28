@@ -2,7 +2,7 @@ import pandas as pd
 import io
 import re
 import pg_utils as sc
-import pg_ham_comp as hc
+import old_code.pg_ham_comp as hc
 import warnings
 warnings.filterwarnings("ignore")
 
